@@ -1,9 +1,11 @@
 package com.daniil.watchprivatedns
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -51,7 +57,6 @@ import androidx.wear.compose.material3.RadioButton
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.dynamicColorScheme
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 
@@ -65,9 +70,45 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PrivateDnsApp() {
     val context = LocalContext.current
-    val dynamicScheme = dynamicColorScheme(context)
+    val darkTheme = isSystemInDarkTheme()
+    val systemScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        if (darkTheme) darkColorScheme() else lightColorScheme()
+    }
+    val wearScheme = ColorScheme(
+        primary = systemScheme.primary,
+        primaryDim = systemScheme.primary,
+        primaryContainer = systemScheme.primaryContainer,
+        onPrimary = systemScheme.onPrimary,
+        onPrimaryContainer = systemScheme.onPrimaryContainer,
+        secondary = systemScheme.secondary,
+        secondaryDim = systemScheme.secondary,
+        secondaryContainer = systemScheme.secondaryContainer,
+        onSecondary = systemScheme.onSecondary,
+        onSecondaryContainer = systemScheme.onSecondaryContainer,
+        tertiary = systemScheme.tertiary,
+        tertiaryDim = systemScheme.tertiary,
+        tertiaryContainer = systemScheme.tertiaryContainer,
+        onTertiary = systemScheme.onTertiary,
+        onTertiaryContainer = systemScheme.onTertiaryContainer,
+        surfaceContainerLow = systemScheme.surfaceContainerLow,
+        surfaceContainer = systemScheme.surfaceContainer,
+        surfaceContainerHigh = systemScheme.surfaceContainerHigh,
+        onSurface = systemScheme.onSurface,
+        onSurfaceVariant = systemScheme.onSurfaceVariant,
+        outline = systemScheme.outline,
+        outlineVariant = systemScheme.outlineVariant,
+        background = systemScheme.background,
+        onBackground = systemScheme.onBackground,
+        error = systemScheme.error,
+        errorDim = systemScheme.error,
+        errorContainer = systemScheme.errorContainer,
+        onError = systemScheme.onError,
+        onErrorContainer = systemScheme.onErrorContainer
+    )
 
-    MaterialTheme(colorScheme = dynamicScheme ?: ColorScheme()) {
+    MaterialTheme(colorScheme = wearScheme) {
         AppScaffold {
             PrivateDnsScreen()
         }
