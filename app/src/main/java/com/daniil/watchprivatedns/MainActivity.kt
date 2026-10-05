@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -163,7 +165,7 @@ private fun PrivateDnsScreen() {
 
             UserApplyResult.DEFERRED_BY_BLUETOOTH -> Toast.makeText(
                 context,
-                "Сохранено. Через телефон используется Автоматически",
+                "Сохранено. Через телефон Private DNS отключён",
                 Toast.LENGTH_LONG
             ).show()
 
@@ -311,24 +313,21 @@ private fun PrivateDnsScreen() {
 
                     history.forEach { savedHost ->
                         item(key = "history_$savedHost") {
-                            Button(
+                            HistoryDnsItem(
+                                hostname = savedHost,
                                 onClick = {
                                     hostname = savedHost
                                     selectedMode = DnsMode.MANUAL
                                 },
+                                onLongClick = {
+                                    DnsPreferences.removeHistory(context, savedHost)
+                                    history = DnsPreferences.history(context)
+                                    Toast.makeText(context, "Удалено: $savedHost", Toast.LENGTH_SHORT).show()
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .transformedHeight(this, transformationSpec),
-                                transformation = SurfaceTransformation(transformationSpec),
-                                colors = ButtonDefaults.filledTonalButtonColors(),
-                                label = {
-                                    Text(
-                                        savedHost,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                },
-                                secondaryLabel = { Text("Выбрать из истории") }
+                                transformation = SurfaceTransformation(transformationSpec)
                             )
                         }
                     }
@@ -404,7 +403,7 @@ private fun AutomationPanel(
 
     if (bluetoothProxy) {
         label = "Интернет через телефон"
-        secondary = "Private DNS временно: Автоматически. Выбранный режим вернётся после отключения Bluetooth-прокси."
+        secondary = "Private DNS временно отключён. Выбранный режим вернётся после отключения Bluetooth-прокси."
     } else if (fallbackReason == FallbackReason.DNS_VALIDATION_FAILED) {
         label = "DNS не прошёл проверку"
         secondary = if (failedHost.isBlank()) {
@@ -425,6 +424,34 @@ private fun AutomationPanel(
         label = { Text(label, maxLines = 2) },
         secondaryLabel = { Text(secondary, maxLines = 4) }
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HistoryDnsItem(
+    hostname: String,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    transformation: SurfaceTransformation? = null
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = RoundedCornerShape(28.dp)
+            )
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(horizontal = 14.dp, vertical = 10.dp)
+    ) {
+        Text(hostname, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            "Нажать — выбрать · удерживать — удалить",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2
+        )
+    }
 }
 
 @Composable
