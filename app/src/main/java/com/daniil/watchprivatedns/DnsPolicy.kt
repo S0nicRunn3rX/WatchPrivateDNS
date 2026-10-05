@@ -33,10 +33,10 @@ internal object DnsPolicy {
         DnsPreferences.clearValidation(context)
 
         if (isBluetoothProxyAvailable(context)) {
-            val result = writeDnsState(context, DnsMode.AUTO)
+            val result = writeDnsState(context, DnsMode.OFF)
             if (result != ApplyResult.OK) return UserApplyResult.DENIED
-            DnsPreferences.setSuspendedByBluetooth(context, mode != DnsMode.AUTO)
-            if (mode != DnsMode.AUTO) {
+            DnsPreferences.setSuspendedByBluetooth(context, mode != DnsMode.OFF)
+            if (mode != DnsMode.OFF) {
                 DnsPreferences.setFallback(context, FallbackReason.BLUETOOTH_PROXY)
                 return UserApplyResult.DEFERRED_BY_BLUETOOTH
             }
@@ -64,11 +64,11 @@ internal object DnsPolicy {
         val btProxy = isBluetoothProxyAvailable(context)
 
         if (btProxy) {
-            if (readDnsState(context).mode != DnsMode.AUTO) {
-                writeDnsState(context, DnsMode.AUTO)
+            if (readDnsState(context).mode != DnsMode.OFF) {
+                writeDnsState(context, DnsMode.OFF)
             }
             DnsPreferences.clearValidation(context)
-            if (desired.mode != DnsMode.AUTO) {
+            if (desired.mode != DnsMode.OFF) {
                 DnsPreferences.setSuspendedByBluetooth(context, true)
                 DnsPreferences.setFallback(context, FallbackReason.BLUETOOTH_PROXY)
             } else {
