@@ -14,7 +14,7 @@
         android:allowBackup="false"
         android:icon="@drawable/ic_app_icon"
         android:roundIcon="@drawable/ic_app_icon"
-        android:label="Private DNS"
+        android:label="Wear Private DNS"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 

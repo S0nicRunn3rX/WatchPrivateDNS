@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WatchPrivateDNS"
+rootProject.name = "WearPrivateDNS"
 include(":app")

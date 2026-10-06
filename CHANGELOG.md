@@ -1,4 +1,10 @@
-# История изменений Watch Private DNS
+# История изменений Wear Private DNS
+
+## 1.3.0 — 2026-10-06
+
+- Приложение переименовано из Watch Private DNS в Wear Private DNS.
+- Добавлена постоянная release-подпись APK вместо debug-подписи.
+- APK публикуется как `WearPrivateDNS-v1.3.0.apk` без суффикса `debug`.
 
 ## 1.2.2 — 2026-10-05
 
